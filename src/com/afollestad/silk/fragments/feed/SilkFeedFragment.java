@@ -15,7 +15,6 @@ import java.util.List;
 public abstract class SilkFeedFragment<ItemType extends SilkComparable> extends SilkListFragment<ItemType> {
 
     private boolean mBlockPaginate = false;
-    protected boolean mInitialLoadOnResume;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
