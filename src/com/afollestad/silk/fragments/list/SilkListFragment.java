@@ -137,14 +137,18 @@ public abstract class SilkListFragment<ItemType extends SilkComparable> extends 
     }
 
     private void setListShown(boolean shown) {
-        mListView.setVisibility(shown ? View.VISIBLE : View.GONE);
-        if (!shown) {
-            if (mEmpty != null) mEmpty.setVisibility(View.GONE);
-        } else {
+        if (shown) {
+            mListView.setVisibility(View.VISIBLE);
+            if (mEmpty != null) mEmpty.setVisibility(View.VISIBLE);
+            if (mProgress != null) mProgress.setVisibility(View.GONE);
             mListView.setEmptyView(mEmpty);
             getAdapter().notifyDataSetChanged();
+        } else {
+            mListView.setVisibility(View.GONE);
+            if (mEmpty != null) mEmpty.setVisibility(View.GONE);
+            if (mProgress != null) mProgress.setVisibility(View.VISIBLE);
+            mListView.setEmptyView(null);
         }
-        if (mProgress != null) mProgress.setVisibility(shown ? View.GONE : View.VISIBLE);
     }
 
     /**
