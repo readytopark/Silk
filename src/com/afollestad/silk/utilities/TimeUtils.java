@@ -109,21 +109,22 @@ public class TimeUtils {
         }
     }
 
-    public static String toStringDate(Date date, boolean shortMonth) {
+    public static String toStringDate(Date date, boolean shortMonth, boolean alwaysIncludeYear) {
         GregorianCalendar cal = new GregorianCalendar();
         cal.setTime(date);
-        return toStringDate(cal, shortMonth);
+        return toStringDate(cal, shortMonth, alwaysIncludeYear);
     }
 
     /**
      * Gets a human-readable date string (month, day, and year).
      *
      * @param shortMonth Whether or display a long or short month string (e.g. 'January' or 'Jan').
+     * @param alwaysIncludeYear Include the year even if it's the current year.
      */
-    public static String toStringDate(Calendar time, boolean shortMonth) {
+    public static String toStringDate(Calendar time, boolean shortMonth, boolean alwaysIncludeYear) {
         Calendar now = Calendar.getInstance();
         String day = getNumberWithSuffix(time.get(Calendar.DAY_OF_MONTH));
-        if (now.get(Calendar.YEAR) == time.get(Calendar.YEAR)) {
+        if (now.get(Calendar.YEAR) == time.get(Calendar.YEAR) && !alwaysIncludeYear) {
             // Same year
             if (now.get(Calendar.MONTH) == time.get(Calendar.MONTH)) {
                 // Same year, same month
