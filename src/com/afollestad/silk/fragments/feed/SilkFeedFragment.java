@@ -1,11 +1,8 @@
 package com.afollestad.silk.fragments.feed;
 
 import android.os.Bundle;
-import android.view.View;
 import com.afollestad.silk.caching.SilkComparable;
 import com.afollestad.silk.fragments.list.SilkListFragment;
-import com.afollestad.silk.views.list.OnSilkScrollListener;
-import com.afollestad.silk.views.list.SilkListView;
 
 import java.util.List;
 
@@ -23,12 +20,8 @@ public abstract class SilkFeedFragment<ItemType extends SilkComparable> extends 
     protected void onPreLoad() {
     }
 
-    protected void onPostLoad(List<ItemType> results, boolean paginated) {
-        if (paginated) {
-            getAdapter().add(results);
-        } else {
-            getAdapter().set(results);
-        }
+    protected void onPostLoad(List<ItemType> results) {
+        getAdapter().set(results);
         setLoadComplete(false);
     }
 
@@ -48,7 +41,7 @@ public abstract class SilkFeedFragment<ItemType extends SilkComparable> extends 
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            onPostLoad(items, false);
+                            onPostLoad(items);
                         }
                     });
                 } catch (final Exception e) {
