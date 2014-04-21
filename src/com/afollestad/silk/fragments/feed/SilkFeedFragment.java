@@ -75,11 +75,27 @@ public abstract class SilkFeedFragment<ItemType extends SilkComparable> extends 
 
     @Override
     public void setEmptyText(CharSequence text) {
-        if(getView() == null) return;
+        if (getView() == null) return;
         View emptyText = getView().findViewById(android.R.id.empty);
         if (emptyText != null && emptyText instanceof TextView) {
             ((TextView) emptyText).setText(text);
         } else throw new IllegalStateException("Your layout does not have an empty text.");
+    }
+
+    @Override
+    public void setListShown(boolean shown) {
+        if (getView() == null) return;
+        View emptyText = getView().findViewById(android.R.id.empty);
+        View progressView = getView().findViewById(android.R.id.progress);
+        if (shown) {
+            if (getListView() != null) getListView().setVisibility(View.VISIBLE);
+            if (emptyText != null) emptyText.setVisibility(getAdapter().getCount() == 0 ? View.VISIBLE : View.GONE);
+            if (progressView != null) progressView.setVisibility(View.GONE);
+        } else {
+            if (getListView() != null) getListView().setVisibility(View.GONE);
+            if (emptyText != null) emptyText.setVisibility(View.GONE);
+            if (progressView != null) progressView.setVisibility(View.VISIBLE);
+        }
     }
 
     protected abstract List<ItemType> refresh() throws Exception;

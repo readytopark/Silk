@@ -86,6 +86,22 @@ public abstract class SilkCursorFeedFragment<ItemType extends SilkCursorItem & S
         } else throw new IllegalStateException("Your layout does not have an empty text.");
     }
 
+    @Override
+    public void setListShown(boolean shown) {
+        if (getView() == null) return;
+        View emptyText = getView().findViewById(android.R.id.empty);
+        View progressView = getView().findViewById(android.R.id.progress);
+        if (shown) {
+            if (getListView() != null) getListView().setVisibility(View.VISIBLE);
+            if (emptyText != null) emptyText.setVisibility(getAdapter().getCount() == 0 ? View.VISIBLE : View.GONE);
+            if (progressView != null) progressView.setVisibility(View.GONE);
+        } else {
+            if (getListView() != null) getListView().setVisibility(View.GONE);
+            if (emptyText != null) emptyText.setVisibility(View.GONE);
+            if (progressView != null) progressView.setVisibility(View.VISIBLE);
+        }
+    }
+
     protected abstract List<ItemType> refresh() throws Exception;
 
     protected abstract void onError(Exception e);
