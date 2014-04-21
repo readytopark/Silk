@@ -91,7 +91,7 @@ public abstract class SilkAdapter<ItemType extends SilkComparable> extends BaseA
     /**
      * Adds a single item to the adapter and notifies the attached ListView.
      */
-    public void add(ItemType toAdd) {
+    public final void add(ItemType toAdd) {
         this.add(toAdd, true);
     }
 
