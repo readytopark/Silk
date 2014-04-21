@@ -80,12 +80,19 @@ public abstract class SilkAdapter<ItemType extends SilkComparable> extends BaseA
     }
 
     /**
+     * Adds a single item to the adapter and optionally notifies the attached ListView.
+     */
+    public void add(ItemType toAdd, boolean updateList) {
+        isChanged = true;
+        this.mItems.add(toAdd);
+        if (updateList) notifyDataSetChanged();
+    }
+
+    /**
      * Adds a single item to the adapter and notifies the attached ListView.
      */
     public void add(ItemType toAdd) {
-        isChanged = true;
-        this.mItems.add(toAdd);
-        notifyDataSetChanged();
+        this.add(toAdd, true);
     }
 
     /**
@@ -158,8 +165,9 @@ public abstract class SilkAdapter<ItemType extends SilkComparable> extends BaseA
         isChanged = true;
         this.mItems.clear();
         if (toSet != null) {
-            for (ItemType item : toSet) add(item);
+            for (ItemType item : toSet) add(item, false);
         }
+        notifyDataSetChanged();
     }
 
     /**
@@ -186,7 +194,7 @@ public abstract class SilkAdapter<ItemType extends SilkComparable> extends BaseA
      * Removes a single item in the adapter using isSame() from SilkComparable. Once the filter finds the item, the loop is broken
      * so you cannot remove multiple items with a single call.
      */
-    public void remove(ItemType toRemove) {
+    public final void remove(ItemType toRemove) {
         for (int i = 0; i < getCount(); i++) {
             ItemType item = getItem(i);
             if (toRemove.equalTo(item)) {
