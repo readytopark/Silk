@@ -34,13 +34,6 @@ public abstract class SilkFeedFragment<ItemType extends SilkComparable> extends 
 
     protected abstract List<ItemType> refresh() throws Exception;
 
-    /**
-     * Default implementation returns null, indicating the fragment does not want pagination to be enabled.
-     */
-    protected List<ItemType> paginate() throws Exception {
-        return null;
-    }
-
     protected abstract void onError(Exception e);
 
     public void performRefresh(boolean showProgress) {
