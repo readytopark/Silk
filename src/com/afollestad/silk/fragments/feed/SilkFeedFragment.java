@@ -29,7 +29,7 @@ public abstract class SilkFeedFragment<ItemType extends SilkComparable> extends 
     }
 
     protected void onPostLoad(List<ItemType> results) {
-        ((SilkAdapter<ItemType>) getListView().getAdapter()).set(results);
+        getAdapter().set(results);
         onLoadComplete(false);
     }
 
