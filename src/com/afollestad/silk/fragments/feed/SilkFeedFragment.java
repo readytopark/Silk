@@ -20,12 +20,16 @@ public abstract class SilkFeedFragment<ItemType extends SilkComparable> extends 
     protected void onPreLoad() {
     }
 
-    protected void onPostLoad(List<ItemType> results) {
-        getAdapter().set(results);
+    protected void onPostLoad(List<ItemType> results, boolean paginated) {
+        if(paginated) {
+            getAdapter().add(results);
+        } else {
+            getAdapter().set(results);
+        }
         setLoadComplete(false);
     }
 
-    protected abstract List<ItemType> refresh() throws Exception;
+    protected abstract List<ItemType> refresh(boolean isPaginating) throws Exception;
 
     protected abstract void onError(Exception e);
 
@@ -37,11 +41,42 @@ public abstract class SilkFeedFragment<ItemType extends SilkComparable> extends 
             @Override
             public void run() {
                 try {
-                    final List<ItemType> items = refresh();
+                    final List<ItemType> items = refresh(false);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            onPostLoad(items);
+                            onPostLoad(items, false);
+                        }
+                    });
+                } catch (final Exception e) {
+                    e.printStackTrace();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            onError(e);
+                            setLoadComplete(true);
+                        }
+                    });
+                }
+            }
+        });
+        t.setPriority(Thread.MAX_PRIORITY);
+        t.start();
+    }
+
+    public void performPaginate() {
+        if (isLoading()) return;
+        setLoading(false);
+        onPreLoad();
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    final List<ItemType> items = refresh(true);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            onPostLoad(items, true);
                         }
                     });
                 } catch (final Exception e) {
