@@ -69,7 +69,7 @@ public abstract class SilkFeedFragment<ItemType extends SilkComparable> extends 
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setListAdapter(initializeAdapter());
-        setEmptyText(getString(getEmptyText()));
+        if (getEmptyText() != 0) setEmptyText(getString(getEmptyText()));
         if (getActivity() != null) getActivity().setTitle(getTitle());
     }
 

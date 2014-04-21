@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
-import com.afollestad.silk.adapters.SilkAdapter;
 import com.afollestad.silk.adapters.SilkCursorAdapter;
 import com.afollestad.silk.caching.SilkComparable;
 import com.afollestad.silk.caching.SilkCursorItem;
@@ -73,13 +72,13 @@ public abstract class SilkCursorFeedFragment<ItemType extends SilkCursorItem & S
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setListAdapter(initializeAdapter());
-        setEmptyText(getString(getEmptyText()));
+        if (getEmptyText() != 0) setEmptyText(getString(getEmptyText()));
         if (getActivity() != null) getActivity().setTitle(getTitle());
     }
 
     @Override
     public void setEmptyText(CharSequence text) {
-        if(getView() == null) return;
+        if (getView() == null) return;
         View emptyText = getView().findViewById(android.R.id.empty);
         if (emptyText != null && emptyText instanceof TextView) {
             ((TextView) emptyText).setText(text);
@@ -97,7 +96,7 @@ public abstract class SilkCursorFeedFragment<ItemType extends SilkCursorItem & S
             if (progressView != null) progressView.setVisibility(View.GONE);
         } else {
             if (getListView() != null) getListView().setVisibility(View.GONE);
-            if (emptyText != null) emptyText.setVisibility(View.GONE);
+            if (emptyText != null) emptyText.setVisibility(View.INVISIBLE);
             if (progressView != null) progressView.setVisibility(View.VISIBLE);
         }
     }
