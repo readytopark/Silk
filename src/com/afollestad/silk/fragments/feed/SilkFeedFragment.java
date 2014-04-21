@@ -75,10 +75,11 @@ public abstract class SilkFeedFragment<ItemType extends SilkComparable> extends 
 
     @Override
     public void setEmptyText(CharSequence text) {
+        if(getView() == null) return;
         View emptyText = getView().findViewById(android.R.id.empty);
         if (emptyText != null && emptyText instanceof TextView) {
             ((TextView) emptyText).setText(text);
-        }
+        } else throw new IllegalStateException("Your layout does not have an empty text.");
     }
 
     protected abstract List<ItemType> refresh() throws Exception;

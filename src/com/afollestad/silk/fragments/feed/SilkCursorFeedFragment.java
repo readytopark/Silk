@@ -79,10 +79,11 @@ public abstract class SilkCursorFeedFragment<ItemType extends SilkCursorItem & S
 
     @Override
     public void setEmptyText(CharSequence text) {
+        if(getView() == null) return;
         View emptyText = getView().findViewById(android.R.id.empty);
         if (emptyText != null && emptyText instanceof TextView) {
             ((TextView) emptyText).setText(text);
-        }
+        } else throw new IllegalStateException("Your layout does not have an empty text.");
     }
 
     protected abstract List<ItemType> refresh() throws Exception;
