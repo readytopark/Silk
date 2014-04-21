@@ -14,8 +14,6 @@ import java.util.List;
  */
 public abstract class SilkFeedFragment<ItemType extends SilkComparable> extends SilkListFragment<ItemType> {
 
-    private boolean mBlockPaginate = false;
-
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -76,67 +74,7 @@ public abstract class SilkFeedFragment<ItemType extends SilkComparable> extends 
         t.start();
     }
 
-    public void performPaginate(boolean showProgress) {
-        if (isLoading()) return;
-        else if (mBlockPaginate) return;
-        setLoading(showProgress);
-        Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    final List<ItemType> items = paginate();
-                    if (items == null || items.size() == 0) {
-                        mBlockPaginate = true;
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                setLoadComplete(false);
-                            }
-                        });
-                        return;
-                    }
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            int beforeCount = getAdapter().getCount();
-                            onPostLoad(items, true);
-                            getListView().smoothScrollToPosition(beforeCount);
-                        }
-                    });
-                } catch (final Exception e) {
-                    e.printStackTrace();
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            onError(e);
-                            setLoadComplete(true);
-                        }
-                    });
-                }
-            }
-        });
-        t.setPriority(Thread.MAX_PRIORITY);
-        t.start();
-    }
-
     protected void onInitialRefresh() {
         performRefresh(true);
-    }
-
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        if (getListView() instanceof SilkListView) {
-            ((SilkListView) getListView()).setOnSilkScrollListener(new OnSilkScrollListener() {
-                @Override
-                public void onScrollToTop() {
-                }
-
-                @Override
-                public void onScrollToBottom() {
-                    performPaginate(false);
-                }
-            });
-        }
     }
 }
