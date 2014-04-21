@@ -1,6 +1,5 @@
 package com.afollestad.silk.fragments.list;
 
-import android.app.ListFragment;
 import android.app.LoaderManager;
 import android.content.CursorLoader;
 import android.content.Loader;
@@ -12,9 +11,15 @@ import com.afollestad.silk.caching.SilkComparable;
 import com.afollestad.silk.caching.SilkCursorItem;
 
 /**
+ * A {@link com.afollestad.silk.fragments.base.SilkFragment} that shows a list, with an empty text, and has progress bar support. Has other various
+ * convenience methods and handles a lot of things on its own to make things easy.
+ * <p/>
+ * The fragment uses a {@link com.afollestad.silk.adapters.SilkAdapter} to display items of type ItemType.
+ *
+ * @param <ItemType> The type of items held in the fragment's list.
  * @author Aidan Follestad (afollestad)
  */
-public abstract class SilkCursorListFragment<ItemType extends SilkCursorItem & SilkComparable> extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public abstract class SilkCursorListFragment<ItemType extends SilkCursorItem & SilkComparable> extends SilkListFragment<ItemType> implements LoaderManager.LoaderCallbacks<Cursor> {
 
     protected abstract Uri getLoaderUri();
 
@@ -31,7 +36,7 @@ public abstract class SilkCursorListFragment<ItemType extends SilkCursorItem & S
     }
 
     protected void onInitialRefresh() {
-        setListShown(false);
+        setLoading(true);
         getLoaderManager().restartLoader(0, null, this);
     }
 
@@ -42,7 +47,7 @@ public abstract class SilkCursorListFragment<ItemType extends SilkCursorItem & S
 
     @Override
     public final void onLoadFinished(Loader<Cursor> arg0, Cursor data) {
-        setListShown(true);
+        setLoadComplete(false);
         if (data == null || data.getColumnCount() == 0 || data.getCount() == 0) {
             onCursorEmpty();
             return;
@@ -57,20 +62,20 @@ public abstract class SilkCursorListFragment<ItemType extends SilkCursorItem & S
         }
     }
 
-    protected SilkCursorAdapter<ItemType> getAdapter() {
-        if(getListView() == null) return null;
-        return (SilkCursorAdapter<ItemType>) getListView().getAdapter();
+    @Override
+    public SilkCursorAdapter<ItemType> getAdapter() {
+        return (SilkCursorAdapter<ItemType>) super.getAdapter();
     }
 
     protected abstract SilkCursorAdapter<ItemType> initializeAdapter();
 
     protected void onCursorEmpty() {
-        setListShown(true);
+        setLoadComplete(false);
     }
 
     protected void onPostLoadFromCursor(Cursor cursor) {
         ((SilkCursorAdapter) getAdapter()).changeCursor(cursor);
-        setListShown(true);
+        setLoadComplete(false);
     }
 
     protected void clearProvider() {
