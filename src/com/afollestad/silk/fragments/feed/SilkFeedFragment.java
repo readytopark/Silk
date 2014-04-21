@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.TextView;
 import com.afollestad.silk.adapters.SilkAdapter;
 import com.afollestad.silk.caching.SilkComparable;
 
@@ -70,6 +71,14 @@ public abstract class SilkFeedFragment<ItemType extends SilkComparable> extends 
         setListAdapter(initializeAdapter());
         setEmptyText(getString(getEmptyText()));
         if (getActivity() != null) getActivity().setTitle(getTitle());
+    }
+
+    @Override
+    public void setEmptyText(CharSequence text) {
+        View emptyText = getView().findViewById(android.R.id.empty);
+        if (emptyText != null && emptyText instanceof TextView) {
+            ((TextView) emptyText).setText(text);
+        }
     }
 
     protected abstract List<ItemType> refresh() throws Exception;
