@@ -179,6 +179,7 @@ public abstract class SilkListFragment<ItemType extends SilkComparable> extends 
         if (mProgress == null)
             Log.w(getClass().getName(), "Warning: no progress view with ID @android:id/progress found in list fragment layout.");
 
+        mListView.setEmptyView(mEmpty);
         mListView.setAdapter(mAdapter);
 
         if (mEmpty != null && getEmptyText() > 0)
