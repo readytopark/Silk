@@ -23,7 +23,6 @@ import com.afollestad.silk.fragments.base.SilkFragment;
  */
 public abstract class SilkListFragment<ItemType extends SilkComparable> extends SilkFragment {
 
-    private View mContentView;
     private AbsListView mListView;
     private TextView mEmpty;
     private ProgressBar mProgress;
@@ -139,10 +138,14 @@ public abstract class SilkListFragment<ItemType extends SilkComparable> extends 
 
     private void setListShown(boolean shown) {
         if (shown) {
-            mContentView.setVisibility(View.VISIBLE);
+            mListView.setEmptyView(mEmpty);
+            mListView.setVisibility(View.VISIBLE);
+            if (mEmpty != null) mEmpty.setVisibility(getAdapter().getCount() == 0 ? View.VISIBLE : View.GONE);
             if (mProgress != null) mProgress.setVisibility(View.GONE);
         } else {
-            mContentView.setVisibility(View.GONE);
+            mListView.setEmptyView(null);
+            mListView.setVisibility(View.GONE);
+            if (mEmpty != null) mEmpty.setVisibility(View.GONE);
             if (mProgress != null) mProgress.setVisibility(View.VISIBLE);
         }
     }
@@ -166,21 +169,17 @@ public abstract class SilkListFragment<ItemType extends SilkComparable> extends 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mContentView = view.findViewById(android.R.id.content);
         mListView = (AbsListView) view.findViewById(android.R.id.list);
         mEmpty = (TextView) view.findViewById(android.R.id.empty);
         mProgress = (ProgressBar) view.findViewById(android.R.id.progress);
         if (mListView == null)
             throw new RuntimeException(getClass().getName() + ": your list fragment layout must contain a ListView with the ID @android:id/list.");
-        if (mContentView == null)
-            throw new RuntimeException(getClass().getName() + ": your list fragment layout must contain a ListView with the ID @android:id/content.");
         if (mEmpty == null)
             Log.w(getClass().getName(), "Warning: no empty view with ID @android:id/empty found in list fragment layout.");
         if (mProgress == null)
             Log.w(getClass().getName(), "Warning: no progress view with ID @android:id/progress found in list fragment layout.");
 
         mListView.setAdapter(mAdapter);
-        mListView.setEmptyView(mEmpty);
 
         if (mEmpty != null && getEmptyText() > 0)
             mEmpty.setText(getEmptyText());
