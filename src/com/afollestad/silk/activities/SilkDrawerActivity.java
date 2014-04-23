@@ -6,9 +6,12 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.ViewDragHelper;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
+
+import java.lang.reflect.Field;
 
 /**
  * An activity that makes interacting with a DrawerLayout quick and easy. All that you have to do is create a layout
@@ -114,6 +117,23 @@ public abstract class SilkDrawerActivity extends Activity {
         };
         mDrawerLayout.setDrawerShadow(getDrawerShadowRes(), Gravity.START);
         mDrawerLayout.setDrawerListener(mDrawerToggle);
+
+        try {
+            Field mDragger = mDrawerLayout.getClass().getDeclaredField(
+                    "mLeftDragger");//mRightDragger for right obviously
+            mDragger.setAccessible(true);
+            ViewDragHelper draggerObj = (ViewDragHelper) mDragger
+                    .get(mDrawerLayout);
+
+            Field mEdgeSize = draggerObj.getClass().getDeclaredField(
+                    "mEdgeSize");
+            mEdgeSize.setAccessible(true);
+            int edge = mEdgeSize.getInt(draggerObj);
+
+            mEdgeSize.setInt(draggerObj, edge * 10); //optimal value as for me, you may set any constant in dp
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
