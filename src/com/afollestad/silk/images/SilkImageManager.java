@@ -110,11 +110,11 @@ public class SilkImageManager {
      *
      * @param source The URI to get the image from.
      */
-    public Bitmap get(String source, Dimension dimension) {
+    public Bitmap get(String source) {
         if (source == null) {
             return null;
         }
-        String key = Utils.getKey(source, dimension);
+        String key = Utils.getKey(source);
         Bitmap bitmap = mLruCache.get(key);
         if (bitmap == null) {
             bitmap = getBitmapFromDisk(key);
@@ -122,7 +122,7 @@ public class SilkImageManager {
             log("Got " + source + " from the memory cache.");
         }
         if (bitmap == null) {
-            bitmap = getBitmapFromExternal(key, source, dimension, null);
+            bitmap = getBitmapFromExternal(key, source, null);
             log("Got " + source + " from the external source.");
         } else {
             log("Got " + source + " from the disk cache.");
@@ -137,18 +137,18 @@ public class SilkImageManager {
      * @param callback The callback that the result will be posted to.
      * @param cache    Whether or not to load from the cache and save to the cache.
      */
-    public void get(final String source, final ImageListener callback, final Dimension dimension, boolean cache) {
+    public void get(final String source, final ImageListener callback, boolean cache) {
         if (cache) {
-            get(source, callback, dimension);
+            get(source, callback);
             return;
         }
         // Caching disabled, load from external immediately
-        final String key = Utils.getKey(source, dimension);
+        final String key = Utils.getKey(source);
         mNetworkExecutorService.execute(new Runnable() {
             @Override
             public void run() {
                 if (Thread.currentThread().isInterrupted()) return;
-                final Bitmap bitmap = getBitmapFromExternal(key, source, dimension, new ProcessCallback() {
+                final Bitmap bitmap = getBitmapFromExternal(key, source, new ProcessCallback() {
                     @Override
                     public Bitmap onProcess(Bitmap image) {
                         if (callback != null && callback instanceof AdvancedImageListener)
@@ -169,14 +169,14 @@ public class SilkImageManager {
      * @param source   The URI to get the image from.
      * @param callback The callback that the result will be posted to.
      */
-    public void get(final String source, final ImageListener callback, final Dimension dimension) {
+    public void get(final String source, final ImageListener callback) {
         if (!Looper.getMainLooper().equals(Looper.myLooper())) {
             throw new RuntimeException("This must only be executed on the main UI Thread!");
         } else if (source == null) {
             return;
         }
 
-        final String key = Utils.getKey(source, dimension);
+        final String key = Utils.getKey(source);
         Bitmap bitmap = mLruCache.get(key);
         if (bitmap != null) {
             log("Got " + source + " from the memory cache.");
@@ -196,7 +196,7 @@ public class SilkImageManager {
 
                 if (source.startsWith("http") && !Silk.isOnline(context)) {
                     log("Device is offline, image is not cached; getting fallback image...");
-                    Bitmap fallback = get(SilkImageManager.SOURCE_FALLBACK, dimension);
+                    Bitmap fallback = get(SilkImageManager.SOURCE_FALLBACK);
                     if (callback != null && callback instanceof AdvancedImageListener)
                         fallback = ((AdvancedImageListener) callback).onPostProcess(bitmap);
                     postCallback(callback, source, fallback);
@@ -206,7 +206,7 @@ public class SilkImageManager {
                 mNetworkExecutorService.execute(new Runnable() {
                     @Override
                     public void run() {
-                        Bitmap bitmap = getBitmapFromExternal(key, source, dimension, new ProcessCallback() {
+                        Bitmap bitmap = getBitmapFromExternal(key, source, new ProcessCallback() {
                             @Override
                             public Bitmap onProcess(Bitmap image) {
                                 if (callback != null && callback instanceof AdvancedImageListener)
@@ -222,8 +222,8 @@ public class SilkImageManager {
         });
     }
 
-    public File getCacheFile(String originalSource, Dimension dimen) {
-        return mDiskCache.getFile(Utils.getKey(originalSource, dimen));
+    public File getCacheFile(String originalSource) {
+        return mDiskCache.getFile(Utils.getKey(originalSource));
     }
 
     private void postCallback(final ImageListener callback, final String source, final Bitmap bitmap) {
@@ -248,14 +248,14 @@ public class SilkImageManager {
         return bitmap;
     }
 
-    private Bitmap getBitmapFromExternal(String key, String source, Dimension dimension, ProcessCallback callback) {
+    private Bitmap getBitmapFromExternal(String key, String source, ProcessCallback callback) {
         byte[] byteArray = sourceToBytes(source);
         if (byteArray == null) {
             source = SilkImageManager.SOURCE_FALLBACK;
             byteArray = sourceToBytes(source);
         }
 
-        Bitmap bitmap = Utils.decodeByteArray(byteArray, dimension);
+        Bitmap bitmap = Utils.decodeByteArray(byteArray);
         if (source.equals(SilkImageManager.SOURCE_FALLBACK)) {
             if (callback != null && bitmap != null)
                 bitmap = callback.onProcess(bitmap);
@@ -326,40 +326,17 @@ public class SilkImageManager {
 
     public static class Utils {
 
-        public static int calculateInSampleSize(BitmapFactory.Options options, Dimension dimension) {
-            // Raw height and width of image
-            final int height = options.outHeight;
-            final int width = options.outWidth;
-            int inSampleSize = 1;
-
-            if (height > dimension.getHeight() || width > dimension.getWidth()) {
-
-                // Calculate ratios of height and width to requested height and width
-                final int heightRatio = Math.round((float) height / (float) dimension.getHeight());
-                final int widthRatio = Math.round((float) width / (float) dimension.getWidth());
-
-                // Choose the smallest ratio as inSampleSize value, this will guarantee
-                // a final image with both dimensions larger than or equal to the
-                // requested height and width.
-                inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
-            }
-
-            return inSampleSize;
-        }
-
-        public static BitmapFactory.Options getBitmapFactoryOptions(Dimension dimension) {
+        public static BitmapFactory.Options getBitmapFactoryOptions() {
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inPurgeable = true;
             options.inInputShareable = true;
             options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-            if (dimension != null)
-                options.inSampleSize = calculateInSampleSize(options, dimension);
             return options;
         }
 
-        public static Bitmap decodeByteArray(byte[] byteArray, Dimension dimension) {
+        public static Bitmap decodeByteArray(byte[] byteArray) {
             try {
-                BitmapFactory.Options bitmapFactoryOptions = getBitmapFactoryOptions(dimension);
+                BitmapFactory.Options bitmapFactoryOptions = getBitmapFactoryOptions();
                 return BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length, bitmapFactoryOptions);
             } catch (Throwable t) {
                 t.printStackTrace();
@@ -367,7 +344,7 @@ public class SilkImageManager {
             return null;
         }
 
-        public static String getKey(String source, Dimension dimension) {
+        public static String getKey(String source) {
             if (source == null) return null;
             source = source.replace("http://", "").replace("https://", "");
             String ext = null;
@@ -375,8 +352,6 @@ public class SilkImageManager {
                 ext = ".jpeg";
             else if (source.endsWith(".png"))
                 ext = ".png";
-            if (dimension != null)
-                source += "_" + dimension.toString();
             try {
                 return URLEncoder.encode(source, "UTF-8") + ext;
             } catch (UnsupportedEncodingException e) {

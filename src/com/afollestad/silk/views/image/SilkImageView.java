@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageView;
-import com.afollestad.silk.images.Dimension;
 import com.afollestad.silk.images.SilkImageManager;
 
 public class SilkImageView extends ImageView {
@@ -13,7 +12,6 @@ public class SilkImageView extends ImageView {
     private String source;
     private SilkImageManager aimage;
     protected boolean invalidateOnLoad;
-    private boolean fitView = true;
     protected String lastSource;
     private View loadingView;
     private boolean mCacheEnabled = true;
@@ -30,17 +28,6 @@ public class SilkImageView extends ImageView {
         super(context, attrs, defStyle);
     }
 
-    @Override
-    protected final void onSizeChanged(int w, int h, int oldw, int oldh) {
-        /**
-         * This method allows the view to wait until it has been measured (a view won't be measured until
-         * right before it becomes visible, which is usually after your code first starts executing. This
-         * insures that correct dimensions will be used for the image loading size to optimize memory.
-         */
-        super.onSizeChanged(w, h, oldw, oldh);
-        loadFromSource();
-    }
-
     public void setImageURL(SilkImageManager manager, String url, boolean cache) {
         if (manager == null)
             throw new IllegalArgumentException("The SilkImageManager cannot be null.");
@@ -52,15 +39,6 @@ public class SilkImageView extends ImageView {
 
     public final void setImageURL(SilkImageManager manager, String url) {
         setImageURL(manager, url, true);
-    }
-
-    /**
-     * Turned on by default as it prevents OutOfMemoryExceptions. Sets whether or not the loaded image will be
-     * resized to fit the dimensions of the view.
-     */
-    public SilkImageView setFitView(boolean fitView) {
-        this.fitView = fitView;
-        return this;
     }
 
     /**
@@ -97,7 +75,7 @@ public class SilkImageView extends ImageView {
             public Bitmap onPostProcess(Bitmap image) {
                 return SilkImageView.this.onPostProcess(image);
             }
-        }, new Dimension(this));
+        });
     }
 
 
@@ -111,7 +89,6 @@ public class SilkImageView extends ImageView {
             return;
         }
         lastSource = source;
-        final Dimension dimen = this.fitView ? new Dimension(this) : null;
         if (loadingView != null) {
             loadingView.setVisibility(View.VISIBLE);
             this.setVisibility(View.GONE);
@@ -143,6 +120,6 @@ public class SilkImageView extends ImageView {
             public Bitmap onPostProcess(Bitmap image) {
                 return SilkImageView.this.onPostProcess(image);
             }
-        }, dimen, mCacheEnabled);
+        }, mCacheEnabled);
     }
 }
