@@ -75,6 +75,7 @@ public class SilkDatePicker extends LinearLayout {
     }
 
     private void init() {
+        if(isInEditMode()) return;
         setOrientation(LinearLayout.HORIZONTAL);
         setGravity(Gravity.CENTER_VERTICAL);
         setWeightSum(3);
