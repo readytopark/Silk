@@ -1,10 +1,11 @@
 package com.afollestad.silk.fragments.list;
 
+import android.app.LoaderManager;
+import android.content.CursorLoader;
+import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
 import com.afollestad.silk.adapters.SilkCursorAdapter;
 import com.afollestad.silk.caching.SilkComparable;
 import com.afollestad.silk.caching.SilkCursorItem;
@@ -18,7 +19,7 @@ import com.afollestad.silk.caching.SilkCursorItem;
  * @param <ItemType> The type of items held in the fragment's list.
  * @author Aidan Follestad (afollestad)
  */
-public abstract class SilkCursorListFragment<ItemType extends SilkCursorItem & SilkComparable> extends SilkListFragment<ItemType> implements android.support.v4.app.LoaderManager.LoaderCallbacks<Cursor> {
+public abstract class SilkCursorListFragment<ItemType extends SilkCursorItem & SilkComparable> extends SilkListFragment<ItemType> implements LoaderManager.LoaderCallbacks<Cursor> {
 
     protected abstract Uri getLoaderUri();
 
