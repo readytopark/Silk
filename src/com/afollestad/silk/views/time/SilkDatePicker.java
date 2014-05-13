@@ -48,6 +48,13 @@ public class SilkDatePicker extends LinearLayout {
         return mCal;
     }
 
+    public final boolean isToday() {
+        Calendar now = Calendar.getInstance();
+        return now.get(Calendar.MONTH) == mCal.get(Calendar.MONTH) &&
+                now.get(Calendar.DAY_OF_MONTH) == mCal.get(Calendar.DAY_OF_MONTH) &&
+                now.get(Calendar.YEAR) == mCal.get(Calendar.YEAR);
+    }
+
     public void setTime(long milliseconds) {
         mCal.setTimeInMillis(milliseconds);
         invalidateCalendar();
@@ -75,7 +82,7 @@ public class SilkDatePicker extends LinearLayout {
     }
 
     private void init() {
-        if(isInEditMode()) return;
+        if (isInEditMode()) return;
         setOrientation(LinearLayout.HORIZONTAL);
         setGravity(Gravity.CENTER_VERTICAL);
         setWeightSum(3);
