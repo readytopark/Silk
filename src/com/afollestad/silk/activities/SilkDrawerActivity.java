@@ -1,10 +1,10 @@
 package com.afollestad.silk.activities;
 
 import android.app.ActionBar;
-import android.app.Activity;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.ViewDragHelper;
 import android.view.Gravity;
@@ -19,7 +19,7 @@ import java.lang.reflect.Field;
  *
  * @author Aidan Follestad (afollestad)
  */
-public abstract class SilkDrawerActivity extends Activity {
+public abstract class SilkDrawerActivity extends FragmentActivity {
 
     private ActionBarDrawerToggle mDrawerToggle;
     private CharSequence mTitle;
