@@ -3,6 +3,7 @@ package com.afollestad.silk.fragments.list;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -135,16 +136,41 @@ public abstract class SilkListFragment<ItemType extends SilkComparable> extends 
      * @param progress Whether or not the progress view will be shown and the list will be hidden.
      */
     public final void setLoading(boolean progress) {
-        if (progress)
-            setListShown(false);
+        if (progress) setListShown(false, true);
         mLoading = true;
     }
 
-    private void setListShown(boolean shown) {
+    public final void setListShown(boolean shown, boolean animate) {
         if (mProgressContainer != null && mListContainer != null) {
-            if (mProgressContainer != null) mProgressContainer.setVisibility(!shown ? View.VISIBLE : View.GONE);
-            if (mListContainer != null) mListContainer.setVisibility(shown ? View.VISIBLE : View.GONE);
-        } else setListShownCustom(shown);
+            if (shown) {
+                if (animate) {
+                    mProgressContainer.startAnimation(AnimationUtils.loadAnimation(
+                            getActivity(), android.R.anim.fade_out));
+                    mListContainer.startAnimation(AnimationUtils.loadAnimation(
+                            getActivity(), android.R.anim.fade_in));
+                } else {
+                    mProgressContainer.clearAnimation();
+                    mListContainer.clearAnimation();
+                }
+                mProgressContainer.setVisibility(View.GONE);
+                mListContainer.setVisibility(View.VISIBLE);
+            } else {
+                if (animate) {
+                    mProgressContainer.startAnimation(AnimationUtils.loadAnimation(
+                            getActivity(), android.R.anim.fade_in));
+                    mListContainer.startAnimation(AnimationUtils.loadAnimation(
+                            getActivity(), android.R.anim.fade_out));
+                } else {
+                    mProgressContainer.clearAnimation();
+                    mListContainer.clearAnimation();
+                }
+                mProgressContainer.setVisibility(View.VISIBLE);
+                mListContainer.setVisibility(View.GONE);
+            }
+        } else {
+            if (animate) throw new IllegalStateException("Cannot animate custom views.");
+            setListShownCustom(shown);
+        }
     }
 
     private void setListShownCustom(boolean shown) {
@@ -170,7 +196,7 @@ public abstract class SilkListFragment<ItemType extends SilkComparable> extends 
      */
     public void setLoadComplete(boolean error) {
         mLoading = false;
-        setListShown(true);
+        setListShown(true, true);
     }
 
     /**
