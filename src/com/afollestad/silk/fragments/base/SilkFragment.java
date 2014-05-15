@@ -88,7 +88,7 @@ public abstract class SilkFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(getLayout(), null);
+        return inflater.inflate(getLayout(), container, false);
     }
 
     public final void runOnUiThread(Runnable runnable) {
