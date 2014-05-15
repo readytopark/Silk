@@ -4,5 +4,6 @@
     <dimen name="empty_text_size">22sp</dimen>
     <dimen name="spinner_item_text">18sp</dimen>
     <dimen name="toast_offset">30dp</dimen>
+    <dimen name="empty_text_padding">15dp</dimen>
 
 </resources>
