@@ -23,9 +23,11 @@ import com.afollestad.silk.fragments.base.SilkFragment;
  */
 public abstract class SilkListFragment<ItemType extends SilkComparable> extends SilkFragment {
 
+    private View mProgressContainer;
+    private View mListContainer;
+    private View mEmptyView;
     private ListView mListView;
-    private TextView mEmpty;
-    private ProgressBar mProgress;
+    private ProgressBar mProgressView;
     private SilkAdapter<ItemType> mAdapter;
     private boolean mLoading;
 
@@ -69,7 +71,9 @@ public abstract class SilkListFragment<ItemType extends SilkComparable> extends 
      * Updates the edit text that was initially set to the value of {@link #getEmptyText()}.
      */
     public final void setEmptyText(CharSequence text) {
-        mEmpty.setText(text);
+        if (!(mEmptyView instanceof TextView))
+            throw new IllegalStateException("Your empty view is not a TextView.");
+        ((TextView) mEmptyView).setText(text);
     }
 
     /**
@@ -137,16 +141,23 @@ public abstract class SilkListFragment<ItemType extends SilkComparable> extends 
     }
 
     private void setListShown(boolean shown) {
+        if (mProgressContainer != null && mListContainer != null) {
+            if (mProgressContainer != null) mProgressContainer.setVisibility(!shown ? View.VISIBLE : View.GONE);
+            if (mListContainer != null) mListContainer.setVisibility(shown ? View.VISIBLE : View.GONE);
+        } else setListShownCustom(shown);
+    }
+
+    private void setListShownCustom(boolean shown) {
         if (shown) {
-            mListView.setEmptyView(mEmpty);
+            mListView.setEmptyView(mEmptyView);
             mListView.setVisibility(View.VISIBLE);
-            if (mEmpty != null) mEmpty.setVisibility(getAdapter().getCount() == 0 ? View.VISIBLE : View.GONE);
-            if (mProgress != null) mProgress.setVisibility(View.GONE);
+            if (mEmptyView != null) mEmptyView.setVisibility(getAdapter().getCount() == 0 ? View.VISIBLE : View.GONE);
+            if (mProgressView != null) mProgressView.setVisibility(View.GONE);
         } else {
             mListView.setEmptyView(null);
             mListView.setVisibility(View.GONE);
-            if (mEmpty != null) mEmpty.setVisibility(View.GONE);
-            if (mProgress != null) mProgress.setVisibility(View.VISIBLE);
+            if (mEmptyView != null) mEmptyView.setVisibility(View.GONE);
+            if (mProgressView != null) mProgressView.setVisibility(View.VISIBLE);
         }
     }
 
@@ -169,21 +180,23 @@ public abstract class SilkListFragment<ItemType extends SilkComparable> extends 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        mProgressContainer = view.findViewById(R.id.progressContainer);
+        mListContainer = view.findViewById(R.id.listContainer);
         mListView = (ListView) view.findViewById(android.R.id.list);
-        mEmpty = (TextView) view.findViewById(android.R.id.empty);
-        mProgress = (ProgressBar) view.findViewById(android.R.id.progress);
+        mEmptyView = view.findViewById(android.R.id.empty);
+        mProgressView = (ProgressBar) view.findViewById(android.R.id.progress);
         if (mListView == null)
             throw new RuntimeException(getClass().getName() + ": your list fragment layout must contain a ListView with the ID @android:id/list.");
-        if (mEmpty == null)
-            Log.w(getClass().getName(), "Warning: no empty view with ID @android:id/empty found in list fragment layout.");
-        if (mProgress == null)
+        if (mEmptyView == null)
+            Log.w(getClass().getName(), "Warning: no view with ID @android:id/empty found in list fragment layout.");
+        if (mProgressView == null)
             Log.w(getClass().getName(), "Warning: no progress view with ID @android:id/progress found in list fragment layout.");
 
-        mListView.setEmptyView(mEmpty);
+        mListView.setEmptyView(mEmptyView);
         mListView.setAdapter(mAdapter);
 
-        if (mEmpty != null && getEmptyText() > 0)
-            mEmpty.setText(getEmptyText());
+        if (mEmptyView != null && mEmptyView instanceof TextView && getEmptyText() > 0)
+            ((TextView) mEmptyView).setText(getEmptyText());
 
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -199,5 +212,13 @@ public abstract class SilkListFragment<ItemType extends SilkComparable> extends 
                 return onItemLongTapped(index, item, view);
             }
         });
+    }
+
+    @Override
+    public void onDestroyView() {
+        mListView = null;
+        mLoading = false;
+        mEmptyView = mProgressContainer = mListContainer = null;
+        super.onDestroyView();
     }
 }
