@@ -3,8 +3,8 @@ package com.afollestad.silk.fragments.list;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.afollestad.silk.R;
@@ -23,7 +23,7 @@ import com.afollestad.silk.fragments.base.SilkFragment;
  */
 public abstract class SilkListFragment<ItemType extends SilkComparable> extends SilkFragment {
 
-    private AbsListView mListView;
+    private ListView mListView;
     private TextView mEmpty;
     private ProgressBar mProgress;
     private SilkAdapter<ItemType> mAdapter;
@@ -32,7 +32,7 @@ public abstract class SilkListFragment<ItemType extends SilkComparable> extends 
     /**
      * Gets the ListView contained in the Fragment's layout.
      */
-    public final AbsListView getListView() {
+    public final ListView getListView() {
         return mListView;
     }
 
@@ -169,7 +169,7 @@ public abstract class SilkListFragment<ItemType extends SilkComparable> extends 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mListView = (AbsListView) view.findViewById(android.R.id.list);
+        mListView = (ListView) view.findViewById(android.R.id.list);
         mEmpty = (TextView) view.findViewById(android.R.id.empty);
         mProgress = (ProgressBar) view.findViewById(android.R.id.progress);
         if (mListView == null)
