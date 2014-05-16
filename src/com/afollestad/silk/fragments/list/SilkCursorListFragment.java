@@ -36,7 +36,7 @@ public abstract class SilkCursorListFragment<ItemType extends SilkCursorItem & S
     }
 
     protected void onInitialRefresh() {
-        setLoading(true);
+        setListShown(false);
         getLoaderManager().restartLoader(0, null, this);
     }
 
@@ -47,7 +47,7 @@ public abstract class SilkCursorListFragment<ItemType extends SilkCursorItem & S
 
     @Override
     public final void onLoadFinished(Loader<Cursor> arg0, Cursor data) {
-        setLoadComplete(false);
+        setListShown(true);
         if (data == null || data.getColumnCount() == 0 || data.getCount() == 0) {
             onCursorEmpty();
             return;
@@ -70,12 +70,12 @@ public abstract class SilkCursorListFragment<ItemType extends SilkCursorItem & S
     protected abstract SilkCursorAdapter<ItemType> initializeAdapter();
 
     protected void onCursorEmpty() {
-        setLoadComplete(false);
+        setListShown(true);
     }
 
     protected void onPostLoadFromCursor(Cursor cursor) {
         ((SilkCursorAdapter) getAdapter()).changeCursor(cursor);
-        setLoadComplete(false);
+        setListShown(true);
     }
 
     protected void clearProvider() {

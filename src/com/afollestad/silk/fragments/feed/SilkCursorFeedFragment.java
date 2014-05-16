@@ -17,7 +17,7 @@ public abstract class SilkCursorFeedFragment<ItemType extends SilkCursorItem & S
     }
 
     protected void onPostLoad(List<ItemType> items) {
-        setLoadComplete(false);
+        setListShown(true);
         if (items == null || items.size() == 0) return;
         ContentResolver resolver = getActivity().getContentResolver();
         for (ItemType item : items) {
@@ -37,9 +37,9 @@ public abstract class SilkCursorFeedFragment<ItemType extends SilkCursorItem & S
         performRefresh(true);
     }
 
-    public void performRefresh(boolean showProgress) {
-        if (isLoading()) return;
-        setLoading(showProgress);
+    public void performRefresh(final boolean showProgress) {
+        if (!isListShown()) return;
+        if (showProgress) setListShown(false);
         onPreLoad();
         Thread t = new Thread(new Runnable() {
             @Override
@@ -58,7 +58,7 @@ public abstract class SilkCursorFeedFragment<ItemType extends SilkCursorItem & S
                         @Override
                         public void run() {
                             onError(e);
-                            setLoadComplete(true);
+                            if (showProgress) setListShown(true);
                         }
                     });
                 }

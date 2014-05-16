@@ -21,21 +21,21 @@ public abstract class SilkFeedFragment<ItemType extends SilkComparable> extends 
     }
 
     protected void onPostLoad(List<ItemType> results, boolean paginated) {
-        if(paginated) {
+        if (paginated) {
             getAdapter().add(results);
         } else {
             getAdapter().set(results);
         }
-        setLoadComplete(false);
+        setListShown(true);
     }
 
     protected abstract List<ItemType> refresh(boolean isPaginating) throws Exception;
 
     protected abstract void onError(Exception e);
 
-    public void performRefresh(boolean showProgress) {
-        if (isLoading()) return;
-        setLoading(showProgress);
+    public void performRefresh() {
+        if (!isListShown()) return;
+        setListShown(false);
         onPreLoad(false);
         Thread t = new Thread(new Runnable() {
             @Override
@@ -54,7 +54,7 @@ public abstract class SilkFeedFragment<ItemType extends SilkComparable> extends 
                         @Override
                         public void run() {
                             onError(e);
-                            setLoadComplete(true);
+                            setListShown(true);
                         }
                     });
                 }
@@ -65,8 +65,8 @@ public abstract class SilkFeedFragment<ItemType extends SilkComparable> extends 
     }
 
     public void performPaginate() {
-        if (isLoading()) return;
-        setLoading(false);
+        if (!isListShown()) return;
+        setListShown(false);
         onPreLoad(true);
         Thread t = new Thread(new Runnable() {
             @Override
@@ -85,7 +85,7 @@ public abstract class SilkFeedFragment<ItemType extends SilkComparable> extends 
                         @Override
                         public void run() {
                             onError(e);
-                            setLoadComplete(true);
+                            setListShown(true);
                         }
                     });
                 }
@@ -96,6 +96,6 @@ public abstract class SilkFeedFragment<ItemType extends SilkComparable> extends 
     }
 
     protected void onInitialRefresh() {
-        performRefresh(true);
+        performRefresh();
     }
 }
