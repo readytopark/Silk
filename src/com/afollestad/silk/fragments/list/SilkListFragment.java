@@ -1,5 +1,6 @@
 package com.afollestad.silk.fragments.list;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
@@ -48,6 +49,14 @@ public abstract class SilkListFragment<ItemType extends SilkComparable> extends 
     private CharSequence mEmptyText;
 
     public SilkListFragment() {
+    }
+
+    protected abstract String getTitle();
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        if (getTitle() != null) activity.setTitle(getTitle());
     }
 
     public final boolean isListShown() {
