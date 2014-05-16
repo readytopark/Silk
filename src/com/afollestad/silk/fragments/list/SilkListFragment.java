@@ -12,7 +12,11 @@ import android.view.animation.AnimationUtils;
 import android.widget.*;
 import com.afollestad.silk.adapters.SilkAdapter;
 import com.afollestad.silk.caching.SilkComparable;
+import com.afollestad.silk.views.text.SilkTextView;
 
+/**
+ * @author Aidan Follestad (afollestad)
+ */
 public abstract class SilkListFragment<ItemType extends SilkComparable> extends Fragment {
 
     static final int INTERNAL_EMPTY_ID = 0x00ff0001;
@@ -40,21 +44,25 @@ public abstract class SilkListFragment<ItemType extends SilkComparable> extends 
     private TextView mStandardEmptyView;
     private View mProgressContainer;
     private View mListContainer;
+    protected boolean mListShown;
     private CharSequence mEmptyText;
-    private boolean mListShown;
 
     public SilkListFragment() {
     }
 
-    public boolean isListShown() {
+    public final boolean isListShown() {
         return mListShown;
     }
 
-    public void runOnUiThread(Runnable runnable) {
-        if(getActivity() == null) {
+    protected final void runOnUiThread(Runnable runnable) {
+        if (getActivity() == null) {
             throw new IllegalStateException("The activity has not been attached yet.");
         }
         getActivity().runOnUiThread(runnable);
+    }
+
+    protected ListView createListView() {
+        return new ListView(getActivity());
     }
 
     /**
@@ -99,13 +107,13 @@ public abstract class SilkListFragment<ItemType extends SilkComparable> extends 
         FrameLayout lframe = new FrameLayout(context);
         lframe.setId(INTERNAL_LIST_CONTAINER_ID);
 
-        TextView tv = new TextView(getActivity());
+        SilkTextView tv = new SilkTextView(getActivity());
         tv.setId(INTERNAL_EMPTY_ID);
         tv.setGravity(Gravity.CENTER);
         lframe.addView(tv, new FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.FILL_PARENT));
 
-        ListView lv = new ListView(getActivity());
+        ListView lv = createListView();
         lv.setId(android.R.id.list);
         lv.setDrawSelectorOnTop(false);
         lframe.addView(lv, new FrameLayout.LayoutParams(
@@ -196,6 +204,7 @@ public abstract class SilkListFragment<ItemType extends SilkComparable> extends 
         mEmptyText = text;
     }
 
+
     public void setListShown(boolean shown) {
         setListShown(shown, true);
     }
@@ -279,7 +288,9 @@ public abstract class SilkListFragment<ItemType extends SilkComparable> extends 
             mList = (ListView) rawListView;
             if (mEmptyView != null) {
                 mList.setEmptyView(mEmptyView);
-            } else if (mEmptyText != null) {
+            } else {
+                if (getEmptyText() != 0 && mEmptyText == null)
+                    mEmptyText = getString(getEmptyText());
                 mStandardEmptyView.setText(mEmptyText);
                 mList.setEmptyView(mStandardEmptyView);
             }
@@ -320,4 +331,6 @@ public abstract class SilkListFragment<ItemType extends SilkComparable> extends 
      * @param view  The view in the list that was tapped.
      */
     protected abstract void onItemTapped(int index, ItemType item, View view);
+
+    public abstract int getEmptyText();
 }

@@ -11,12 +11,6 @@ import com.afollestad.silk.caching.SilkComparable;
 import com.afollestad.silk.caching.SilkCursorItem;
 
 /**
- * A {@link com.afollestad.silk.fragments.base.SilkFragment} that shows a list, with an empty text, and has progress bar support. Has other various
- * convenience methods and handles a lot of things on its own to make things easy.
- * <p/>
- * The fragment uses a {@link com.afollestad.silk.adapters.SilkAdapter} to display items of type ItemType.
- *
- * @param <ItemType> The type of items held in the fragment's list.
  * @author Aidan Follestad (afollestad)
  */
 public abstract class SilkCursorListFragment<ItemType extends SilkCursorItem & SilkComparable> extends SilkListFragment<ItemType> implements LoaderManager.LoaderCallbacks<Cursor> {

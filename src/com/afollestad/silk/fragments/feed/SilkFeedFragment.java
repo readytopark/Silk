@@ -33,9 +33,9 @@ public abstract class SilkFeedFragment<ItemType extends SilkComparable> extends 
 
     protected abstract void onError(Exception e);
 
-    public void performRefresh() {
+    public void performRefresh(final boolean showProgress) {
         if (!isListShown()) return;
-        setListShown(false);
+        if (showProgress) setListShown(false);
         onPreLoad(false);
         Thread t = new Thread(new Runnable() {
             @Override
@@ -54,7 +54,7 @@ public abstract class SilkFeedFragment<ItemType extends SilkComparable> extends 
                         @Override
                         public void run() {
                             onError(e);
-                            setListShown(true);
+                            if (showProgress) setListShown(true);
                         }
                     });
                 }
@@ -96,6 +96,6 @@ public abstract class SilkFeedFragment<ItemType extends SilkComparable> extends 
     }
 
     protected void onInitialRefresh() {
-        performRefresh();
+        performRefresh(true);
     }
 }
