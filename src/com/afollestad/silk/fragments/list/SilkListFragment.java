@@ -64,9 +64,7 @@ public abstract class SilkListFragment<ItemType extends SilkComparable> extends 
     }
 
     protected final void runOnUiThread(Runnable runnable) {
-        if (getActivity() == null) {
-            throw new IllegalStateException("The activity has not been attached yet.");
-        }
+        if (getActivity() == null) return;
         getActivity().runOnUiThread(runnable);
     }
 
