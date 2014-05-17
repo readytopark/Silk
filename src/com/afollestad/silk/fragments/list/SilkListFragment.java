@@ -5,13 +5,13 @@ import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.widget.*;
-import com.afollestad.silk.R;
 import com.afollestad.silk.adapters.SilkAdapter;
 import com.afollestad.silk.caching.SilkComparable;
 import com.afollestad.silk.views.text.SilkTextView;
@@ -122,7 +122,7 @@ public abstract class SilkListFragment<ItemType extends SilkComparable> extends 
         SilkTextView tv = new SilkTextView(getActivity());
         tv.setId(INTERNAL_EMPTY_ID);
         tv.setGravity(Gravity.CENTER);
-        tv.setTextSize(getActivity().getResources().getDimensionPixelSize(R.dimen.empty_text_size));
+        tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
         lframe.addView(tv, new FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
