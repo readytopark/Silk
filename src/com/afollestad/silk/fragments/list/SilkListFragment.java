@@ -51,7 +51,7 @@ public abstract class SilkListFragment<ItemType extends SilkComparable> extends 
     public SilkListFragment() {
     }
 
-    public View getProgressContainer() {
+    public View getmProgressContainer() {
         return mProgressContainer;
     }
 
@@ -196,6 +196,11 @@ public abstract class SilkListFragment<ItemType extends SilkComparable> extends 
     public ListView getListView() {
         ensureList();
         return mList;
+    }
+
+    public TextView getStandardEmptyView() {
+        ensureList();
+        return mStandardEmptyView;
     }
 
     /**
