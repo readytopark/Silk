@@ -51,6 +51,10 @@ public abstract class SilkListFragment<ItemType extends SilkComparable> extends 
     public SilkListFragment() {
     }
 
+    public View getProgressContainer() {
+        return mProgressContainer;
+    }
+
     protected abstract String getTitle();
 
     @Override
