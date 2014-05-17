@@ -60,9 +60,9 @@ public abstract class SilkListFragment<ItemType extends SilkComparable> extends 
     protected abstract String getTitle();
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        if (getTitle() != null) activity.setTitle(getTitle());
+    public void onResume() {
+        super.onResume();
+        if(getActivity() != null) getActivity().setTitle(getTitle());
     }
 
     public final boolean isListShown() {
