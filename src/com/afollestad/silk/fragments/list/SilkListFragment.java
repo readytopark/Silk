@@ -117,7 +117,7 @@ public abstract class SilkListFragment<ItemType extends SilkComparable> extends 
 
         // ------------------------------------------------------------------
 
-        FrameLayout lframe = new FrameLayout(context);
+        RelativeLayout lframe = new RelativeLayout(context);
         lframe.setId(INTERNAL_LIST_CONTAINER_ID);
 
         SilkTextView tv = new SilkTextView(getActivity());
@@ -125,10 +125,14 @@ public abstract class SilkListFragment<ItemType extends SilkComparable> extends 
         tv.setGravity(Gravity.CENTER);
         tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 22);
         int sidePadding = getActivity().getResources().getDimensionPixelSize(R.dimen.empty_text_padding);
-        tv.setPadding(sidePadding, 0, sidePadding, 0);
+//        tv.setPadding(sidePadding, 0, sidePadding, 0);
 
-        lframe.addView(tv, new FrameLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        RelativeLayout.LayoutParams tvParams = new RelativeLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        tvParams.addRule(RelativeLayout.CENTER_IN_PARENT);
+        tvParams.leftMargin = sidePadding;
+        tvParams.rightMargin = sidePadding;
+        lframe.addView(tv, tvParams);
 
         ListView lv = createListView();
         lv.setId(android.R.id.list);
