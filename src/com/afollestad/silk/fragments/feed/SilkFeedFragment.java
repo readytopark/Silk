@@ -11,6 +11,8 @@ import java.util.List;
  */
 public abstract class SilkFeedFragment<ItemType extends SilkComparable> extends SilkListFragment<ItemType> {
 
+    protected boolean mDidInitialRefresh;
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -96,6 +98,8 @@ public abstract class SilkFeedFragment<ItemType extends SilkComparable> extends 
     }
 
     protected void onInitialRefresh() {
+        if (mDidInitialRefresh) return;
+        mDidInitialRefresh = true;
         performRefresh(true);
     }
 }
