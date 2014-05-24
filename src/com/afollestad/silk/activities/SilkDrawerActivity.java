@@ -130,7 +130,7 @@ public abstract class SilkDrawerActivity extends FragmentActivity {
             mEdgeSize.setAccessible(true);
             int edge = mEdgeSize.getInt(draggerObj);
 
-            mEdgeSize.setInt(draggerObj, edge * 5); //optimal value as for me, you may set any constant in dp
+            mEdgeSize.setInt(draggerObj, edge * 2);
         } catch (Exception e) {
             e.printStackTrace();
         }
